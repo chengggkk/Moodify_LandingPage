@@ -9,6 +9,207 @@
 </head>
 
 <body>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Fade-in animations
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            const fadeElems = document.querySelectorAll('.fade-in-section, .fade-in-left');
+            fadeElems.forEach(elem => {
+                observer.observe(elem);
+            });
+
+            // Make initial elements visible
+            setTimeout(() => {
+                const heroTextElement = document.querySelector('.heroText');
+                if (heroTextElement) {
+                    heroTextElement.classList.add('is-visible');
+                }
+
+                const heroElems = document.querySelectorAll('.hero .fade-in-section');
+                heroElems.forEach(elem => {
+                    elem.classList.add('is-visible');
+                });
+            }, 300);
+        });
+    </script>
+
+    <!-- Second JavaScript for roadmap -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Function to check if an element is in the viewport
+            function isInViewport(element) {
+                const rect = element.getBoundingClientRect();
+                return (
+                    rect.top >= 0 &&
+                    rect.left >= 0 &&
+                    rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+                    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+                );
+            }
+
+            // Function to handle scroll events
+            function handleScroll() {
+                const milestones = document.querySelectorAll('.milestone');
+
+                milestones.forEach(milestone => {
+                    if (isInViewport(milestone)) {
+                        milestone.classList.add('visible');
+                    }
+                });
+            }
+
+            // Initial check
+            handleScroll();
+
+            // Add scroll event listener
+            window.addEventListener('scroll', handleScroll);
+
+            // Make first milestone visible immediately
+            document.querySelector('.milestone').classList.add('visible');
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+    // Smooth scrolling for navigation links
+    const navLinks = document.querySelectorAll('nav a[href^="#"]');
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return; // Skip if it's just "#"
+            
+            const targetElement = document.querySelector(targetId);
+            if (!targetElement) return; // Skip if target element doesn't exist
+            
+            // Add active class to the clicked link
+            navLinks.forEach(link => link.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Calculate scroll position with offset for the fixed navbar
+            const navHeight = document.querySelector('nav').offsetHeight;
+            const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+            const offsetPosition = targetPosition - navHeight;
+            
+            // Smooth scroll to the target section
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        });
+    });
+    
+    // Highlight active navigation item based on scroll position
+    function highlightNavOnScroll() {
+        const scrollPosition = window.scrollY;
+        
+        // Get all sections and their positions
+        document.querySelectorAll('section[id]').forEach(section => {
+            const sectionTop = section.offsetTop - document.querySelector('nav').offsetHeight - 100;
+            const sectionBottom = sectionTop + section.offsetHeight;
+            const sectionId = section.getAttribute('id');
+            
+            if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+                // Remove active class from all links
+                navLinks.forEach(link => link.classList.remove('active'));
+                
+                // Add active class to the corresponding nav link
+                const activeLink = document.querySelector(`nav a[href="#${sectionId}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+            }
+        });
+    }
+    
+    // Call on scroll
+    window.addEventListener('scroll', highlightNavOnScroll);
+    
+    // Call initially to set the correct active link on page load
+    highlightNavOnScroll();
+    
+    // Keep the existing animation code
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    const fadeElems = document.querySelectorAll('.fade-in-section, .fade-in-left');
+    fadeElems.forEach(elem => {
+        observer.observe(elem);
+    });
+
+    // Make initial elements visible
+    setTimeout(() => {
+        const heroTextElement = document.querySelector('.heroText');
+        if (heroTextElement) {
+            heroTextElement.classList.add('is-visible');
+        }
+
+        const heroElems = document.querySelectorAll('.hero .fade-in-section');
+        heroElems.forEach(elem => {
+            elem.classList.add('is-visible');
+        });
+    }, 300);
+    
+    // Adding roadmap animation code
+    function isInViewport(element) {
+        const rect = element.getBoundingClientRect();
+        return (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+    }
+
+    function handleScroll() {
+        const milestones = document.querySelectorAll('.milestone');
+
+        milestones.forEach(milestone => {
+            if (isInViewport(milestone)) {
+                milestone.classList.add('visible');
+            }
+        });
+    }
+
+    // Initial check
+    handleScroll();
+
+    // Add scroll event listener
+    window.addEventListener('scroll', handleScroll);
+
+    // Make first milestone visible immediately
+    document.querySelector('.milestone').classList.add('visible');
+});
+    </script>
+
+    
     <!-- Animated Background -->
     <div class="animated-background">
         <div class="wave"></div>
@@ -23,8 +224,8 @@
         <div class="menu">
             <a href="#features-section">Features</a>
             <a href="#workflow-section">Workflow</a>
-            <a href="#tech-advantages-section">Technology</a>
             <a href="#tech-stack-section">Stack</a>
+            <a href="#Roadmap-section">Roadmap</a>
             <a href="#about-section">About</a>
         </div>
         <a class="button" href="#">
@@ -365,28 +566,7 @@
         </div>
     </section>
 
-
-
-    <!-- About Section -->
-    <section id="about-section" class="container">
-        <h2 class="section-title fade-in-section">About Moodify</h2>
-        <div class="about-content">
-            <p class="about-text fade-in-section fade1">
-                Moodify combines "Mood" and "Spotify," also a homophone of "Modify," symbolizing our mission to
-                transform your emotional state through music.
-            </p>
-            <ul class="about-list fade-in-section fade2">
-                <li><strong>From Passive Listening to Active Healing</strong> - Music as a tool for emotional management
-                    and personal growth</li>
-                <li><strong>From One-Way Playback to Two-Way Creation</strong> - Transform your listening experience
-                    into a creative journey</li>
-                <li><strong>From Generic Suggestions to Precise Resonance</strong> - Experience music that truly
-                    understands your emotional needs</li>
-            </ul>
-        </div>
-    </section>
-
-    <div class="container">
+    <section id="Roadmap-section" class="container">
         <h1>Moodify Development Roadmap</h1>
 
         <div class="roadmap">
@@ -477,7 +657,26 @@
             </div>
 
         </div>
-    </div>
+
+
+    <!-- About Section -->
+    <section id="about-section" class="container">
+        <h2 class="section-title fade-in-section">About Moodify</h2>
+        <div class="about-content">
+            <p class="about-text fade-in-section fade1">
+                Moodify combines "Mood" and "Spotify," also a homophone of "Modify," symbolizing our mission to
+                transform your emotional state through music.
+            </p>
+            <ul class="about-list fade-in-section fade2">
+                <li><strong>From Passive Listening to Active Healing</strong> - Music as a tool for emotional management
+                    and personal growth</li>
+                <li><strong>From One-Way Playback to Two-Way Creation</strong> - Transform your listening experience
+                    into a creative journey</li>
+                <li><strong>From Generic Suggestions to Precise Resonance</strong> - Experience music that truly
+                    understands your emotional needs</li>
+            </ul>
+        </div>
+    </section>
 
 
     <!-- Footer -->
@@ -489,79 +688,7 @@
         </div>
     </footer>
     <!-- First JavaScript for animations (keep as is) -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Fade-in animations
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.1
-            };
-
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, observerOptions);
-
-            const fadeElems = document.querySelectorAll('.fade-in-section, .fade-in-left');
-            fadeElems.forEach(elem => {
-                observer.observe(elem);
-            });
-
-            // Make initial elements visible
-            setTimeout(() => {
-                const heroTextElement = document.querySelector('.heroText');
-                if (heroTextElement) {
-                    heroTextElement.classList.add('is-visible');
-                }
-
-                const heroElems = document.querySelectorAll('.hero .fade-in-section');
-                heroElems.forEach(elem => {
-                    elem.classList.add('is-visible');
-                });
-            }, 300);
-        });
-    </script>
-
-    <!-- Second JavaScript for roadmap -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Function to check if an element is in the viewport
-            function isInViewport(element) {
-                const rect = element.getBoundingClientRect();
-                return (
-                    rect.top >= 0 &&
-                    rect.left >= 0 &&
-                    rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-                    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-                );
-            }
-
-            // Function to handle scroll events
-            function handleScroll() {
-                const milestones = document.querySelectorAll('.milestone');
-
-                milestones.forEach(milestone => {
-                    if (isInViewport(milestone)) {
-                        milestone.classList.add('visible');
-                    }
-                });
-            }
-
-            // Initial check
-            handleScroll();
-
-            // Add scroll event listener
-            window.addEventListener('scroll', handleScroll);
-
-            // Make first milestone visible immediately
-            document.querySelector('.milestone').classList.add('visible');
-        });
-    </script>
+   
 
 </body>
 
