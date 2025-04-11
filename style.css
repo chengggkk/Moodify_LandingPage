@@ -99,6 +99,12 @@ nav {
     transition: transform 0.3s ease;
 }
 
+
+.logo-image {
+    height: 30px; /* Adjust size as needed */
+    margin-right: 8px;
+}
+
 .logo:hover {
     transform: scale(1.05);
 }
@@ -771,17 +777,17 @@ h1 {
 .connecting-line {
     position: absolute;
     top: 40px;
-    width: calc(50% - 40px);
+    width: calc(50% - 45%);
     height: 3px;
     background: var(--primary-gradient);
 }
 
 .milestone:nth-child(odd) .connecting-line {
-    left: calc(50% + 40px);
+    left: calc(50% + 5px);
 }
 
 .milestone:nth-child(even) .connecting-line {
-    right: calc(50% + 40px);
+    right: calc(50% + 5px);
 }
 
 @media (max-width: 768px) {
