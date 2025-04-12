@@ -85,132 +85,132 @@
         });
 
         document.addEventListener('DOMContentLoaded', function () {
-    // Smooth scrolling for navigation links
-    const navLinks = document.querySelectorAll('nav a[href^="#"]');
-    
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            const targetId = this.getAttribute('href');
-            if (targetId === '#') return; // Skip if it's just "#"
-            
-            const targetElement = document.querySelector(targetId);
-            if (!targetElement) return; // Skip if target element doesn't exist
-            
-            // Add active class to the clicked link
-            navLinks.forEach(link => link.classList.remove('active'));
-            this.classList.add('active');
-            
-            // Calculate scroll position with offset for the fixed navbar
-            const navHeight = document.querySelector('nav').offsetHeight;
-            const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
-            const offsetPosition = targetPosition - navHeight;
-            
-            // Smooth scroll to the target section
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
+            // Smooth scrolling for navigation links
+            const navLinks = document.querySelectorAll('nav a[href^="#"]');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return; // Skip if it's just "#"
+
+                    const targetElement = document.querySelector(targetId);
+                    if (!targetElement) return; // Skip if target element doesn't exist
+
+                    // Add active class to the clicked link
+                    navLinks.forEach(link => link.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Calculate scroll position with offset for the fixed navbar
+                    const navHeight = document.querySelector('nav').offsetHeight;
+                    const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+                    const offsetPosition = targetPosition - navHeight;
+
+                    // Smooth scroll to the target section
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                });
             });
-        });
-    });
-    
-    // Highlight active navigation item based on scroll position
-    function highlightNavOnScroll() {
-        const scrollPosition = window.scrollY;
-        
-        // Get all sections and their positions
-        document.querySelectorAll('section[id]').forEach(section => {
-            const sectionTop = section.offsetTop - document.querySelector('nav').offsetHeight - 100;
-            const sectionBottom = sectionTop + section.offsetHeight;
-            const sectionId = section.getAttribute('id');
-            
-            if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-                // Remove active class from all links
-                navLinks.forEach(link => link.classList.remove('active'));
-                
-                // Add active class to the corresponding nav link
-                const activeLink = document.querySelector(`nav a[href="#${sectionId}"]`);
-                if (activeLink) {
-                    activeLink.classList.add('active');
+
+            // Highlight active navigation item based on scroll position
+            function highlightNavOnScroll() {
+                const scrollPosition = window.scrollY;
+
+                // Get all sections and their positions
+                document.querySelectorAll('section[id]').forEach(section => {
+                    const sectionTop = section.offsetTop - document.querySelector('nav').offsetHeight - 100;
+                    const sectionBottom = sectionTop + section.offsetHeight;
+                    const sectionId = section.getAttribute('id');
+
+                    if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+                        // Remove active class from all links
+                        navLinks.forEach(link => link.classList.remove('active'));
+
+                        // Add active class to the corresponding nav link
+                        const activeLink = document.querySelector(`nav a[href="#${sectionId}"]`);
+                        if (activeLink) {
+                            activeLink.classList.add('active');
+                        }
+                    }
+                });
+            }
+
+            // Call on scroll
+            window.addEventListener('scroll', highlightNavOnScroll);
+
+            // Call initially to set the correct active link on page load
+            highlightNavOnScroll();
+
+            // Keep the existing animation code
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            const fadeElems = document.querySelectorAll('.fade-in-section, .fade-in-left');
+            fadeElems.forEach(elem => {
+                observer.observe(elem);
+            });
+
+            // Make initial elements visible
+            setTimeout(() => {
+                const heroTextElement = document.querySelector('.heroText');
+                if (heroTextElement) {
+                    heroTextElement.classList.add('is-visible');
                 }
+
+                const heroElems = document.querySelectorAll('.hero .fade-in-section');
+                heroElems.forEach(elem => {
+                    elem.classList.add('is-visible');
+                });
+            }, 300);
+
+            // Adding roadmap animation code
+            function isInViewport(element) {
+                const rect = element.getBoundingClientRect();
+                return (
+                    rect.top >= 0 &&
+                    rect.left >= 0 &&
+                    rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+                    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+                );
             }
-        });
-    }
-    
-    // Call on scroll
-    window.addEventListener('scroll', highlightNavOnScroll);
-    
-    // Call initially to set the correct active link on page load
-    highlightNavOnScroll();
-    
-    // Keep the existing animation code
-    const observerOptions = {
-        root: null,
-        rootMargin: '0px',
-        threshold: 0.1
-    };
 
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('is-visible');
-                observer.unobserve(entry.target);
+            function handleScroll() {
+                const milestones = document.querySelectorAll('.milestone');
+
+                milestones.forEach(milestone => {
+                    if (isInViewport(milestone)) {
+                        milestone.classList.add('visible');
+                    }
+                });
             }
+
+            // Initial check
+            handleScroll();
+
+            // Add scroll event listener
+            window.addEventListener('scroll', handleScroll);
+
+            // Make first milestone visible immediately
+            document.querySelector('.milestone').classList.add('visible');
         });
-    }, observerOptions);
-
-    const fadeElems = document.querySelectorAll('.fade-in-section, .fade-in-left');
-    fadeElems.forEach(elem => {
-        observer.observe(elem);
-    });
-
-    // Make initial elements visible
-    setTimeout(() => {
-        const heroTextElement = document.querySelector('.heroText');
-        if (heroTextElement) {
-            heroTextElement.classList.add('is-visible');
-        }
-
-        const heroElems = document.querySelectorAll('.hero .fade-in-section');
-        heroElems.forEach(elem => {
-            elem.classList.add('is-visible');
-        });
-    }, 300);
-    
-    // Adding roadmap animation code
-    function isInViewport(element) {
-        const rect = element.getBoundingClientRect();
-        return (
-            rect.top >= 0 &&
-            rect.left >= 0 &&
-            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-        );
-    }
-
-    function handleScroll() {
-        const milestones = document.querySelectorAll('.milestone');
-
-        milestones.forEach(milestone => {
-            if (isInViewport(milestone)) {
-                milestone.classList.add('visible');
-            }
-        });
-    }
-
-    // Initial check
-    handleScroll();
-
-    // Add scroll event listener
-    window.addEventListener('scroll', handleScroll);
-
-    // Make first milestone visible immediately
-    document.querySelector('.milestone').classList.add('visible');
-});
     </script>
 
-    
+
     <!-- Animated Background -->
     <div class="animated-background">
         <div class="wave"></div>
@@ -225,7 +225,7 @@
             <img src="logo.png" alt="Moodify Logo" class="logo-image">
             <span class="logo-text">Moodify</span>
         </a>
-            <div class="menu">
+        <div class="menu">
             <a href="#issue-section">Issues & Solutions</a>
             <a href="#workflow-section">Workflow</a>
             <a href="#tech-stack-section">Stack</a>
@@ -247,144 +247,142 @@
         <p class="fade-in-section fade1">"Feel the music. Understand the story."</p>
         <p class="fade-in-section fade2">Your emotional music companion that curates songs based on your real-time mood
             and transforms your listening experience with meaningful, personalized stories.</p>
-        <a href="https://chatbot-muvfxiv4u5bfddaeunnh98.streamlit.app/" class="cta-button fade-in-section fade3">Experience Moodify</a>
+        <a href="https://chatbot-muvfxiv4u5bfddaeunnh98.streamlit.app/"
+            class="cta-button fade-in-section fade3">Experience Moodify</a>
     </section>
 
     <!-- Combined Features Section -->
     <section id="issue-section" class="container">
-            <h2 class="section-title fade-in-section">Issues & Solutions</h2>
-    
-            <!-- Problem 1 -->
-            <div class="problem-solution-container fade-in-section">
-                <div class="problem-box">
-                    <h3 class="problem-title">The Problem</h3>
-                    <p>Music suggestions don’t relate the feeling</p>
+        <h2 class="section-title fade-in-section">Issues & Solutions</h2>
+
+        <!-- Problem 1 -->
+        <div class="problem-solution-container fade-in-section">
+            <div class="problem-box">
+                <h3 class="problem-title">The Problem</h3>
+                <p>Music suggestions don’t relate the feeling.</p>
+            </div>
+
+            <div class="feature-solution">
+                <div class="feature-card">
+                    <div class="feature-icon">🎵</div>
+                    <h3 class="feature-title">Emotion-Aware Music</h3>
+                    <ul class="feature-list">
+                        <li>Analyzes your mood in real-time</li>
+                        <li>Matches music to how you're feeling right now</li>
+                        <li>Gives personal recommendations</li>
+                        <li>Finds music that connects with your state</li>
+                    </ul>
                 </div>
-    
-                <div class="feature-solution">
-                    <div class="feature-card">
-                        <div class="feature-icon">🎵</div>
-                        <h3 class="feature-title">Emotion-Aware Music</h3>
-                        <ul class="feature-list">
-                            <li>Analyzes your mood in real-time</li>
-                            <li>Matches music to how you're feeling right now</li>
-                            <li>Gives personal recommendations that understand you</li>
-                            <li>Finds music that connects with your emotions and favo</li>
-                        </ul>
-                    </div>
-    
-                    <div class="tech-card">
-                        <div class="tech-icon">🧠</div>
-                        <h3 class="tech-title">How We Built It</h3>
-                        <ul class="tech-list">
-                            <li>Johnson8187/Chinese-Emotion-Small model for classification</li>
-                            <li>Semantic understanding of natural language input</li>
-                            <li>Spotify API integration (Audio Features, Recently Played, Top Items)</li>
-                            <li>Multi-dimensional emotion mapping system</li>
-                        </ul>
-                    </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">🧠</div>
+                    <h3 class="tech-title">How We Built It</h3>
+                    <ul class="tech-list">
+                        <li>Johnson8187/Chinese-Emotion-Small model</li>
+                        <li>Semantic understanding of natural language</li>
+                        <li>Spotify API</li>
+                        <li>Multi-dimensional emotion mapping system</li>
+                    </ul>
                 </div>
             </div>
-    
-            <!-- Problem 2 -->
-            <div class="problem-solution-container fade-in-section fade1">
-                <div class="problem-box">
-                    <h3 class="problem-title">The Problem</h3>
-                    <p>Most platforms treat lyrics as mere supplements without deeper emotional analysis, missing the rich
-                        stories within music.</p>
+        </div>
+
+        <!-- Problem 2 -->
+        <div class="problem-solution-container fade-in-section fade1">
+            <div class="problem-box">
+                <h3 class="problem-title">The Problem</h3>
+                <p>Most platforms treat lyrics as mere supplements without deeper emotional analysis.</p>
+            </div>
+
+            <div class="feature-solution">
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <h3 class="feature-title">Lyric Analysis</h3>
+                    <ul class="feature-list">
+                        <li>Finds the emotional meaning in lyrics</li>
+                        <li>Mental connections with song meanings</li>
+                        <li>Explains what songs are really about</li>
+                        <li>Helps you connect to the music's message</li>
+                    </ul>
                 </div>
-    
-                <div class="feature-solution">
-                    <div class="feature-card">
-                        <div class="feature-icon">📝</div>
-                        <h3 class="feature-title">Lyric Analysis</h3>
-                        <ul class="feature-list">
-                            <li>Finds the emotional meaning in song lyrics</li>
-                            <li>Psychological connections with song meanings</li>
-                            <li>Explains what songs are really about</li>
-                            <li>Helps you feel more connected to the music's message</li>
-                        </ul>
-                    </div>
-    
-                    <div class="tech-card">
-                        <div class="tech-icon">📊</div>
-                        <h3 class="tech-title">How We Built It</h3>
-                        <ul class="tech-list">
-                            <li>BERT/LSTM technologies for deep text processing</li>
-                            <li>Nuanced emotion detection algorithms</li>
-                            <li>Thematic context mapping frameworks</li>
-                            <li>Psychological alignment modeling</li>
-                        </ul>
-                    </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">📊</div>
+                    <h3 class="tech-title">How We Built It</h3>
+                    <ul class="tech-list">
+                        <li>BERT/LSTM NLP technologies</li>
+                        <li>Nuanced emotion detection algorithms</li>
+                        <li>Thematic context mapping frameworks</li>
+                        <li>Psychological alignment modeling</li>
+                    </ul>
                 </div>
             </div>
-    
-            <!-- Problem 3 -->
-            <div class="problem-solution-container fade-in-section fade2">
-                <div class="problem-box">
-                    <h3 class="problem-title">The Problem</h3>
-                    <p>Music platforms focus only on playback with limited interactive creative experiences, missing
-                        opportunities for deeper engagement.</p>
+        </div>
+
+        <!-- Problem 3 -->
+        <div class="problem-solution-container fade-in-section fade2">
+            <div class="problem-box">
+                <h3 class="problem-title">The Problem</h3>
+                <p>Music platforms focus only on playback with limited interactive creative experiences.</p>
+            </div>
+
+            <div class="feature-solution">
+                <div class="feature-card">
+                    <div class="feature-icon">✨</div>
+                    <h3 class="feature-title">Story Generation</h3>
+                    <ul class="feature-list">
+                        <li>Creates personal stories based on your music</li>
+                        <li>Lets you choose story themes and styles</li>
+                        <li>Makes listening to music more interactive</li>
+                        <li>Creates emotional creative experiences</li>
+                    </ul>
                 </div>
-    
-                <div class="feature-solution">
-                    <div class="feature-card">
-                        <div class="feature-icon">✨</div>
-                        <h3 class="feature-title">Story Generation</h3>
-                        <ul class="feature-list">
-                            <li>Creates personal stories based on your music</li>
-                            <li>Lets you choose story themes and styles</li>
-                            <li>Makes listening to music more interactive</li>
-                            <li>Creates emotional creative experiences</li>
-                        </ul>
-                    </div>
-    
-                    <div class="tech-card">
-                        <div class="tech-icon">🔮</div>
-                        <h3 class="tech-title">How We Built It</h3>
-                        <ul class="tech-list">
-                            <li>Mistral-Large-Latest powered generative agent</li>
-                            <li>Fine-tuned on age-appropriate corpus (18-40)</li>
-                            <li>Cross-modal content creation system</li>
-                            <li>Emotion-music-text integration framework</li>
-                        </ul>
-                    </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">🔮</div>
+                    <h3 class="tech-title">How We Built It</h3>
+                    <ul class="tech-list">
+                        <li>Mistral-Large-Latest</li>
+                        <li>Fine-tuned on age-appropriate corpus</li>
+                        <li>Cross-modal content creation system</li>
+                        <li>Emotion-music-text integration framework</li>
+                    </ul>
                 </div>
             </div>
-    
-            <!-- Learning Engine -->
-            <div class="problem-solution-container fade-in-section fade3">
-                <div class="problem-box">
-                    <h3 class="problem-title">The Problem</h3>
-                    <p>Static recommendation systems fail to evolve with your changing preferences and emotional patterns
-                        over time.</p>
+        </div>
+
+        <!-- Learning Engine -->
+        <div class="problem-solution-container fade-in-section fade3">
+            <div class="problem-box">
+                <h3 class="problem-title">The Problem</h3>
+                <p>Static recommendation systems fail to evolve with your changing state.</p>
+            </div>
+
+            <div class="feature-solution">
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3 class="feature-title">Learning Engine</h3>
+                    <ul class="feature-list">
+                        <li>Constantly adjusts based on your feedback</li>
+                        <li>Gets better at recommending music</li>
+                        <li>Makes your experience more personal</li>
+                        <li>Becomes smarter about understanding you</li>
+                    </ul>
                 </div>
-    
-                <div class="feature-solution">
-                    <div class="feature-card">
-                        <div class="feature-icon">🔄</div>
-                        <h3 class="feature-title">Learning Engine</h3>
-                        <ul class="feature-list">
-                            <li>Constantly adjusts based on your feedback</li>
-                            <li>Gets better at recommending music over time</li>
-                            <li>Makes your experience more personal the more you use it</li>
-                            <li>Becomes smarter about understanding your emotions</li>
-                        </ul>
-                    </div>
-    
-                    <div class="tech-card">
-                        <div class="tech-icon">⚙️</div>
-                        <h3 class="tech-title">How We Built It</h3>
-                        <ul class="tech-list">
-                            <li>Adaptive machine learning algorithms</li>
-                            <li>Feedback integration systems</li>
-                            <li>Progressive refinement mechanisms</li>
-                            <li>Long-term preference modeling</li>
-                        </ul>
-                    </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">⚙️</div>
+                    <h3 class="tech-title">How We Built It</h3>
+                    <ul class="tech-list">
+                        <li>Adaptive machine learning algorithms</li>
+                        <li>Feedback integration systems</li>
+                        <li>Progressive refinement mechanisms</li>
+                        <li>Long-term preference modeling</li>
+                    </ul>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
     <!-- Workflow Section -->
     <section id="workflow-section">
@@ -575,125 +573,236 @@
         <div class="roadmap">
             <div class="roadmap-line"></div>
 
-            <!-- Milestone 1: Login & UI Setup -->
+            <!-- Login & UI Setup Milestone -->
             <div class="milestone">
                 <div class="milestone-date">4/21</div>
                 <div class="connecting-line"></div>
                 <div class="milestone-content">
                     <h2 class="milestone-title">Login & UI Setup</h2>
                     <p class="milestone-desc">Set up authentication system and basic UI design.</p>
-                    <ul class="tools-list">
-                        <li><span class="tool-name">Next.js</span> - React framework for frontend</li>
-                        <li><span class="tool-name">MongoDB</span> - User data storage</li>
-                        <li><span class="tool-name">Spotify API</span> - Authentication & resources</li>
-                    </ul>
+                    <table class="tools-table">
+                        <thead>
+                            <tr>
+                                <th>Tool</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="tool-name">Next.js</td>
+                                <td>React framework for frontend</td>
+                            </tr>
+                            <tr>
+                                <td class="tool-name">MongoDB</td>
+                                <td>User data storage</td>
+                            </tr>
+                            <tr>
+                                <td class="tool-name">Spotify API</td>
+                                <td>Authentication & resources</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- Milestone 2: Playlist Generation Engine -->
+            <!-- Playlist Generation Engine Milestone -->
             <div class="milestone">
                 <div class="milestone-date">4/28</div>
                 <div class="connecting-line"></div>
                 <div class="milestone-content">
                     <h2 class="milestone-title">Playlist Generation Engine</h2>
                     <p class="milestone-desc">Create emotion-based playlists with contextual stories.</p>
-                    <ul class="tools-list">
-                        <li><span class="tool-name">Emotion Classification</span> - Johnson8187/Chinese-Emotion-Small
-                            model</li>
-                        <li><span class="tool-name">Lyrics Analysis</span> - BeautifulSoup & AZLyrics</li>
-                        <li><span class="tool-name">NLP</span> - BERT/LSTM models</li>
-                        <li><span class="tool-name">User History</span> - Spotify API (Recently Played, Top Items)</li>
-                        <li><span class="tool-name">Track Analysis</span> - Spotify Audio Features API</li>
-                        <li><span class="tool-name">Playlist Creation</span> - Spotify Create Playlist API</li>
-                        <li><span class="tool-name">Story Generation</span> - MistralAI Large</li>
-                    </ul>
+                    <table class="tools-table">
+                        <thead>
+                            <tr>
+                                <th>Tool</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="tool-name">Emotion Classification</td>
+                                <td>Johnson8187/Chinese-Emotion-Small model</td>
+                            </tr>
+                            <tr>
+                                <td class="tool-name">Lyrics Analysis</td>
+                                <td>BeautifulSoup & AZLyrics</td>
+                            </tr>
+                            <tr>
+                                <td class="tool-name">NLP</td>
+                                <td>BERT/LSTM models</td>
+                            </tr>
+                            <tr>
+                                <td class="tool-name">User History</td>
+                                <td>Spotify API (Recently Played, Top Items)</td>
+                            </tr>
+                            <tr>
+                                <td class="tool-name">Track Analysis</td>
+                                <td>Spotify Audio Features API</td>
+                            </tr>
+                            <tr>
+                                <td class="tool-name">Playlist Creation</td>
+                                <td>Spotify Create Playlist API</td>
+                            </tr>
+                            <tr>
+                                <td class="tool-name">Story Generation</td>
+                                <td>MistralAI Large</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- Milestone 3: Memory & Fine-tuning -->
+            <!-- Memory & Fine-tuning Milestone -->
             <div class="milestone">
                 <div class="milestone-date">5/12</div>
                 <div class="connecting-line"></div>
                 <div class="milestone-content">
                     <h2 class="milestone-title">Memory & Model Fine-tuning</h2>
                     <p class="milestone-desc">Implement conversation memory and enhance AI personalization.</p>
-                    <ul class="tools-list">
-                        <li><span class="tool-name">ChromaDB</span> - Vector database for conversation history</li>
-                        <li><span class="tool-name">Langchain</span> - LLM application framework</li>
-                        <li><span class="tool-name">Hugging Face</span> - Model fine-tuning platform</li>
-                    </ul>
+                    <table class="tools-table">
+                        <thead>
+                            <tr>
+                                <th>Tool</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="tool-name">ChromaDB</td>
+                                <td>Vector database for conversation history</td>
+                            </tr>
+                            <tr>
+                                <td class="tool-name">Langchain</td>
+                                <td>LLM application framework</td>
+                            </tr>
+                            <tr>
+                                <td class="tool-name">Hugging Face</td>
+                                <td>Model fine-tuning platform</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- Milestone 4: Testing & Quality Assurance -->
+            <!-- Testing & Quality Assurance Milestone -->
             <div class="milestone">
                 <div class="milestone-date">5/26</div>
                 <div class="connecting-line"></div>
                 <div class="milestone-content">
                     <h2 class="milestone-title">Testing & Quality Assurance</h2>
                     <p class="milestone-desc">Ensure reliability, performance, and user experience.</p>
-                    <ul class="tools-list">
-                        <li><span class="tool-name">Unit Testing</span> - Component functionality</li>
-                        <li><span class="tool-name">Integration Testing</span> - Module interaction</li>
-                        <li><span class="tool-name">User Acceptance Testing</span> - Feedback collection</li>
-                        <li><span class="tool-name">Performance Testing</span> - Response times evaluation</li>
-                        <li><span class="tool-name">Security Testing</span> - Threat resistance verification</li>
-                    </ul>
+                    <table class="tools-table">
+                        <thead>
+                            <tr>
+                                <th>Tool</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="tool-name">Unit Testing</td>
+                                <td>Component functionality</td>
+                            </tr>
+                            <tr>
+                                <td class="tool-name">Integration Testing</td>
+                                <td>Module interaction</td>
+                            </tr>
+                            <tr>
+                                <td class="tool-name">User Acceptance Testing</td>
+                                <td>Feedback collection</td>
+                            </tr>
+                            <tr>
+                                <td class="tool-name">Performance Testing</td>
+                                <td>Response times evaluation</td>
+                            </tr>
+                            <tr>
+                                <td class="tool-name">Security Testing</td>
+                                <td>Threat resistance verification</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- Milestone 5: Final Report & Launch -->
+            <!-- Final Report & Launch Milestone -->
             <div class="milestone">
                 <div class="milestone-date">6/2</div>
                 <div class="connecting-line"></div>
                 <div class="milestone-content">
                     <h2 class="milestone-title">Final Report & Launch</h2>
                     <p class="milestone-desc">Document process, architecture, and prepare for launch.</p>
-                    <ul class="tools-list">
-                        <li><span class="tool-name">Documentation</span> - Architecture details</li>
-                        <li><span class="tool-name">User Manual</span> - Usage guidelines</li>
-                        <li><span class="tool-name">Deployment</span> - Production release</li>
-                        <li><span class="tool-name">Analytics</span> - User engagement tracking</li>
-                        <li><span class="tool-name">Support Plan</span> - Maintenance strategy</li>
-                    </ul>
+                    <table class="tools-table">
+                        <thead>
+                            <tr>
+                                <th>Tool</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="tool-name">Documentation</td>
+                                <td>Architecture details</td>
+                            </tr>
+                            <tr>
+                                <td class="tool-name">User Manual</td>
+                                <td>Usage guidelines</td>
+                            </tr>
+                            <tr>
+                                <td class="tool-name">Deployment</td>
+                                <td>Production release</td>
+                            </tr>
+                            <tr>
+                                <td class="tool-name">Analytics</td>
+                                <td>User engagement tracking</td>
+                            </tr>
+                            <tr>
+                                <td class="tool-name">Support Plan</td>
+                                <td>Maintenance strategy</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-
         </div>
 
 
-    <!-- About Section -->
-    <section id="about-section" class="container">
-        <h2 class="section-title fade-in-section">About Moodify</h2>
-        <div class="about-content">
-            <p class="about-text fade-in-section fade1">
-                Moodify combines "Mood" and "Spotify," also is a word similar to "Modify," symbolizing our mission to
-                transform your emotional state through music.
-            </p>
-            <ul class="about-list fade-in-section fade2">
-                <strong>🎵 From Passive Listening to Active Healing</strong> - Music as a tool for emotional management
-                    and personal growth
-                <p>
-                <strong>✍️ From One-Way Playback to Two-Way Creation</strong> - Transform your listening experience
-                    into a creative journey
-                <p>
-                <strong>🌟 From Generic Suggestions to Precise Resonance</strong> - Experience music that truly
-                    understands your emotional needs
-            </ul>
-        </div>
-    </section>
+            <!-- About Section -->
+            <section id="about-section" class="container">
+                <h2 class="section-title fade-in-section">About Moodify</h2>
+                <div class="about-content">
+                    <p class="about-text fade-in-section fade1">
+                        Moodify combines "Mood" and "Spotify," also is a word similar to "Modify," symbolizing our
+                        mission to
+                        transform your emotional state through music.
+                    </p>
+                    <ul class="about-list fade-in-section fade2">
+                        <strong>🎵 From Passive Listening to Active Healing</strong> - Music as a tool for emotional
+                        management
+                        and personal growth
+                        <p>
+                            <strong>✍️ From One-Way Playback to Two-Way Creation</strong> - Transform your listening
+                            experience
+                            into a creative journey
+                        <p>
+                            <strong>🌟 From Generic Suggestions to Precise Resonance</strong> - Experience music that
+                            truly
+                            understands your emotional needs
+                    </ul>
+                </div>
+            </section>
 
 
-    <!-- Footer -->
-    <footer>
-        <hr>
-        <div class="footerContent">
-            <a href="#">Moodify</a>
-            <span class="copyRight">Moodify © 2025 All rights reserved.</span>
-        </div>
-    </footer>
-    <!-- First JavaScript for animations (keep as is) -->
-   
+            <!-- Footer -->
+            <footer>
+                <hr>
+                <div class="footerContent">
+                    <a href="#">Moodify</a>
+                    <span class="copyRight">Moodify © 2025 All rights reserved.</span>
+                </div>
+            </footer>
+            <!-- First JavaScript for animations (keep as is) -->
+
 
 </body>
 

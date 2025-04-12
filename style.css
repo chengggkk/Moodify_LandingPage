@@ -851,3 +851,32 @@ h1 {
     background-size: 200% 200%;
     animation: moveGradient 5s ease infinite;
 }
+
+
+.tools-table, .about-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+}
+
+.tools-table th, .about-table th {
+    background-color: transparent;
+    text-align: left;
+    padding: 10px;
+    border-bottom: 2px solid #ddd;
+}
+
+.tools-table td, .about-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.tool-name {
+    font-weight: bold;
+}
+
+.tools-table tr:hover, .about-table tr:hover {
+    background-color: #f9f9f9;
+    opacity: 0.3;
+    color: gray;
+}
